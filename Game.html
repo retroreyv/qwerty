@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Всё для дома - уют в каждом уголке</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4a6fa5 0%, #3a5a80 100%);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1513519245088-0e12902e5a38?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 20px;
+            position: relative;
+        }
+        
+        .product-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .product-price {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+        
+        .product-price .old-price {
+            font-size: 1.2rem;
+            color: #95a5a6;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+        
+        .product-rating {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stars {
+            color: #f1c40f;
+            margin-right: 10px;
+        }
+        
+        .rating-count {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: #4a6fa5;
+            color: white;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5a80;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: #f1f1f1;
+            color: #333;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #ddd;
+        }
+        
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 100;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            max-width: 900px;
+            margin: 50px auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.4s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .close-modal {
+            font-size: 1.5rem;
+            color: #95a5a6;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #e74c3c;
+        }
+        
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        
+        .modal-product {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .modal-image {
+            flex: 1;
+            min-width: 300px;
+            max-height: 500px;
+            object-fit: cover;
+        }
+        
+        .modal-details {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+        }
+        
+        .modal-price {
+            font-size: 2rem;
+            color: #e74c3c;
+            margin: 20px 0;
+        }
+        
+        .modal-description {
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        .modal-features {
+            margin-bottom: 30px;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-name {
+            font-weight: bold;
+            min-width: 120px;
+            color: #2c3e50;
+        }
+        
+        .reviews-section {
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+        
+        .reviews-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .review {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .review-author {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .review-date {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+        
+        .review-rating {
+            color: #f1c40f;
+            margin: 5px 0;
+        }
+        
+        .review-text {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .add-review {
+            margin-top: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .rating-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .rating-input label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .rating-stars {
+            direction: rtl;
+            display: inline-block;
+        }
+        
+        .rating-stars input {
+            display: none;
+        }
+        
+        .rating-stars label {
+            color: #ddd;
+            font-size: 1.5rem;
+            padding: 0 3px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .rating-stars input:checked ~ label,
+        .rating-stars label:hover,
+        .rating-stars label:hover ~ label {
+            color: #f1c40f;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #ecf0f1;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: #4a6fa5;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            color: white;
+            background-color: #4a6fa5;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            background-color: #3a5a80;
+        }
+        
+        .copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #4a6fa5;
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-product {
+                flex-direction: column;
+            }
+            
+            .modal-image {
+                max-height: 300px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Всё для дома</h1>
+            <p class="tagline">Уют в каждом уголке вашего дома</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="products">
+            <!-- Товар 1 -->
+            <div class="product-card" onclick="openModal('modal1')">
+                <div class="product-badge">Хит продаж</div>
+                <img src="кубик.png" alt="Игральный кубик" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Игральный кубик</h3>
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="rating-count">(24 отзыва)</span>
+                    </div>
+                    <div class="product-price">299 ₽ <span class="old-price">399 ₽</span></div>
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="event.stopPropagation();addToCart('Игральный кубик', 299)">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation();openModal('modal1')">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Товар 2 -->
+            <div class="product-card" onclick="openModal('modal2')">
+                <img src="подставка.png" alt="Подставка для телефона" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Подставка для телефона</h3>
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <span class="rating-count">(18 отзывов)</span>
+                    </div>
+                    <div class="product-price">499 ₽</div>
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="event.stopPropagation();addToCart('Подставка для телефона', 499)">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation();openModal('modal2')">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Товар 3 -->
+            <div class="product-card" onclick="openModal('modal3')">
+                <div class="product-badge">Новинка</div>
+                <img src="органайзер.png" alt="Органайзер" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Органайзер для медиаторов(брелок)</h3>
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-count">(32 отзыва)</span>
+                    </div>
+                    <div class="product-price">1 299 ₽</div>
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="event.stopPropagation();addToCart('Деревянный органайзер', 1299)">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation();openModal('modal3')">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Товар 4 -->
+            <div class="product-card" onclick="openModal('modal4')">
+                <img src="балерина.png" alt="Салфетница-балерина" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Салфетница-балерина</h3>
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <span class="rating-count">(15 отзывов)</span>
+                    </div>
+                    <div class="product-price">899 ₽</div>
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="event.stopPropagation();addToCart('Салфетница-балерина', 899)">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation();openModal('modal4')">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Товар 5 -->
+            <div class="product-card" onclick="openModal('modal5')">
+                <div class="product-badge">Акция</div>
+                <img src="вешалка.png" alt="Вешалка" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Дизайнерская вешалка</h3>
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="rating-count">(21 отзыв)</span>
+                    </div>
+                    <div class="product-price">1 599 ₽ <span class="old-price">1 999 ₽</span></div>
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="event.stopPropagation();addToCart('Дизайнерская вешалка', 1599)">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation();openModal('modal5')">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальные окна товаров -->
+    
+    <!-- Модальное окно 1 -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Игральный кубик</h3>
+                <span class="close-modal" onclick="closeModal('modal1')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-product">
+                    <img src="кубик.png" alt="Игральный кубик" class="modal-image">
+                    <div class="modal-details">
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span>4.5 (24 отзыва)</span>
+                            </div>
+                        </div>
+                        <div class="modal-price">299 ₽ <span class="old-price">399 ₽</span></div>
+                        <p class="modal-description">
+                            Большой деревянный игральный кубик для настольных игр. 
+                            Размер: 5×5×5 см. Изготовлен из натурального дерева, 
+                            тщательно отшлифован и покрыт лаком. Отлично подходит 
+                            для семейных игр и украшения интерьера.
+                        </p>
+                        <div class="modal-features">
+                            <h4>Характеристики:</h4>
+                            <ul class="feature-list">
+                                <li><span class="feature-name">Материал:</span> Натуральное дерево</li>
+                                <li><span class="feature-name">Размер:</span> 5×5×5 см</li>
+                                <li><span class="feature-name">Вес:</span> 120 г</li>
+                                <li><span class="feature-name">Цвет:</span> Натуральное дерево</li>
+                                <li><span class="feature-name">Производитель:</span> "Домашний уют"</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.2rem;" onclick="addToCart('Игральный кубик', 299)">
+                            <i class="fas fa-shopping-cart"></i> Добавить в корзину
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="reviews-section">
+                    <h3 class="reviews-title">Отзывы о товаре</h3>
+                    
+                    <div class="review">
+                        <div class="review-header">
+                            <span class="review-author">Анна К.</span>
+                            <span class="review-date">15.05.2023</span>
+                        </div>
+                        <div class="review-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text">
+                            Отличный кубик! Качественно сделан, приятный на ощупь. 
+                            Дети в восторге, играем каждый вечер. Рекомендую!
+                        </p>
+                    </div>
+                    
+                    <div class="review">
+                        <div class="review-header">
+                            <span class="review-author">Игорь С.</span>
+                            <span class="review-date">02.05.2023</span>
+                        </div>
+                        <div class="review-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <p class="review-text">
+                            Хороший кубик, но немного тяжеловат для детей. 
+                            Качество обработки на высоте, грани ровные.
+                        </p>
+                    </div>
+                    
+                    <div class="add-review">
+                        <h4>Оставить отзыв</h4>
+                        <form id="reviewForm1">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Ваше имя" required>
+                            </div>
+                            <div class="rating-input">
+                                <label>Оценка:</label>
+                                <div class="rating-stars">
+                                    <input type="radio" id="star5-1" name="rating1" value="5"><label for="star5-1">★</label>
+                                    <input type="radio" id="star4-1" name="rating1" value="4"><label for="star4-1">★</label>
+                                    <input type="radio" id="star3-1" name="rating1" value="3"><label for="star3-1">★</label>
+                                    <input type="radio" id="star2-1" name="rating1" value="2"><label for="star2-1">★</label>
+                                    <input type="radio" id="star1-1" name="rating1" value="1"><label for="star1-1">★</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control" placeholder="Ваш отзыв" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно 2 -->
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Подставка для телефона</h3>
+                <span class="close-modal" onclick="closeModal('modal2')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-product">
+                    <img src="подставка.png" alt="Подставка для телефона" class="modal-image">
+                    <div class="modal-details">
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>4.0 (18 отзывов)</span>
+                            </div>
+                        </div>
+                        <div class="modal-price">499 ₽</div>
+                        <p class="modal-description">
+                            Универсальная подставка для телефона из натурального дерева. 
+                            Подходит для всех моделей смартфонов. Регулируемый угол наклона. 
+                            Идеальна для просмотра видео и видеозвонков. 
+                            Компактная и стильная.
+                        </p>
+                        <div class="modal-features">
+                            <h4>Характеристики:</h4>
+                            <ul class="feature-list">
+                                <li><span class="feature-name">Материал:</span> Натуральное дерево</li>
+                                <li><span class="feature-name">Размер:</span> 12×8×5 см</li>
+                                <li><span class="feature-name">Вес:</span> 150 г</li>
+                                <li><span class="feature-name">Цвет:</span> Натуральное дерево</li>
+                                <li><span class="feature-name">Регулировка:</span> Угол наклона</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.2rem;" onclick="addToCart('Подставка для телефона', 499)">
+                            <i class="fas fa-shopping-cart"></i> Добавить в корзину
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="reviews-section">
+                    <h3 class="reviews-title">Отзывы о товаре</h3>
+                    
+                    <div class="review">
+                        <div class="review-header">
+                            <span class="review-author">Мария В.</span>
+                            <span class="review-date">22.04.2023</span>
+                        </div>
+                        <div class="review-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text">
+                            Очень удобная подставка! Использую для работы - теперь телефон 
+                            всегда перед глазами и не занимает место на столе. Качество 
+                            изготовления отличное.
+                        </p>
+                    </div>
+                    
+                    <div class="review">
+                        <div class="review-header">
+                            <span class="review-author">Дмитрий П.</span>
+                            <span class="review-date">10.04.2023</span>
+                        </div>
+                        <div class="review-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <p class="review-text">
+                            Хорошая подставка, но для моего большого телефона немного 
+                            неустойчива. В целом доволен, смотрится стильно.
+                        </p>
+                    </div>
+                    
+                    <div class="add-review">
+                        <h4>Оставить отзыв</h4>
+                        <form id="reviewForm2">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Ваше имя" required>
+                            </div>
+                            <div class="rating-input">
+                                <label>Оценка:</label>
+                                <div class="rating-stars">
+                                    <input type="radio" id="star5-2" name="rating2" value="5"><label for="star5-2">★</label>
+                                    <input type="radio" id="star4-2" name="rating2" value="4"><label for="star4-2">★</label>
+                                    <input type="radio" id="star3-2" name="rating2" value="3"><label for="star3-2">★</label>
+                                    <input type="radio" id="star2-2" name="rating2" value="2"><label for="star2-2">★</label>
+                                    <input type="radio" id="star1-2" name="rating2" value="1"><label for="star1-2">★</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control" placeholder="Ваш отзыв" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Остальные модальные окна (3-5) можно добавить по аналогии -->
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>О магазине</h3>
+                <p>"Всё для дома" - это магазин качественных товаров для уюта и комфорта в вашем доме.</p>
+                <p>Мы работаем с 2010 года и дорожим своей репутацией.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Контакты</h3>
+                <p><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Примерная, 123</p>
+                <p><i class="fas fa-phone"></i> +7 (937) 083-50-21</p>
+                <p><i class="fas fa-envelope"></i> hamelion-SZ@yandex.ru</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Полезные ссылки</h3>
+                <a href="#">Доставка и оплата</a>
+                <a href="#">Возврат и обмен</a>
+                <a href="#">О компании</a>
+                <a href="#">Контакты</a>
+            </div>
+        </div>
+        
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2025 Всё для дома.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Открытие модального окна
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Закрытие модального окна
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Закрытие при клике вне окна
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Добавление в корзину
+        function addToCart(productName, price) {
+            alert(`Товар "${productName}" за ${price} ₽ добавлен в корзину!`);
+            // Здесь можно добавить реаль
